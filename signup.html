@@ -6,7 +6,7 @@
     <title>Signup Page</title>
   </head>
   <body>
-    <form action="user/signup" method="post">
+    <form id="signup_form">
       <label for="name">Name</label>
       <input type="text" name="name" id="name" />
       <label for="email">E-Mail ID</label>
@@ -17,6 +17,9 @@
       <input type="password" name="password" id="password" />
       <button type="submit">Signup</button>
     </form>
+    <p id="alert_box"></p>
     <a href="./login.html">Already a user</a>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/signup.js"></script>
   </body>
 </html>
