@@ -6,15 +6,16 @@
     <title>Login Page</title>
   </head>
   <body>
-    <form action="user/login" method="post">
+    <form id="login_form">
       <label for="email">E-Mail ID</label>
       <input type="email" name="email" id="email" />
-      <label for="phone">Phone No</label>
-      <input type="number" name="phone" id="phone" />
       <label for="password">password</label>
       <input type="password" name="password" id="password" />
       <button type="submit">Login</button>
     </form>
+    <p id="alert_box"></p>
     <a href="./signup.html">Signup Now</a>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./js/login.js"></script>
   </body>
 </html>
