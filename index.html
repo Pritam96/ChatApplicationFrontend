@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="stylesheet" href="./css/chat.css" />
+    <title>Chat Page</title>
+  </head>
+  <body>
+    <h1 class="title">Chat App</h1>
+    <div class="main">
+      <ul class="message-container" id="message-container">
+        <li class="message-left">
+          <p class="message">
+            Lorem ipsum dolor sit amet consectetur
+            <span>user1 => 26 August 07:42 PM</span>
+          </p>
+        </li>
+        <li class="message-right">
+          <p class="message">
+            Lorem ipsum dolor sit amet consectetur
+            <span>you => 26 August 07:43 PM</span>
+          </p>
+        </li>
+        <li class="message-feedback">
+          <p class="feedback">user1 is typing...</p>
+        </li>
+      </ul>
+      <form class="message-form" id="message-form">
+        <input
+          type="text"
+          class="message-input"
+          name="message-input"
+          id="message-input"
+        />
+        <div class="v-divider"></div>
+        <button type="submit" class="send-button">
+          send&nbsp;<span><i class="fa fa-paper-plane"></i></span>
+        </button>
+      </form>
+    </div>
+    <h3 class="client-total" id="client-total">Total Clients: 2</h3>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="#"></script>
+  </body>
+</html>

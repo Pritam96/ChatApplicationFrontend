@@ -4,17 +4,24 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login Page</title>
+    <link rel="stylesheet" href="./css/forms.css" />
   </head>
   <body>
-    <form id="login_form">
-      <label for="email">E-Mail ID</label>
-      <input type="email" name="email" id="email" />
-      <label for="password">password</label>
-      <input type="password" name="password" id="password" />
-      <button type="submit">Login</button>
+    <form class="login-form" id="login-form">
+      <div class="form-control">
+        <label for="email">E-Mail ID</label>
+        <input type="email" name="email" id="email" />
+      </div>
+      <div class="form-control">
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" />
+      </div>
+      <button class="login-button" type="submit">Login</button>
     </form>
-    <p id="alert_box"></p>
-    <a href="./signup.html">Signup Now</a>
+    <p id="alert-box"></p>
+    <div class="centered">
+      <a href="./signup.html">Signup Now</a>
+    </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="./js/login.js"></script>
   </body>

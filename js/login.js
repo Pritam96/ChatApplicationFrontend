@@ -1,5 +1,5 @@
-const login_form = document.querySelector('#login_form');
-const alert_box = document.querySelector('#alert_box');
+const login_form = document.querySelector('#login-form');
+const alert_box = document.querySelector('#alert-box');
 
 login_form.addEventListener('submit', login);
 
