@@ -1,5 +1,5 @@
 const signup_form = document.querySelector('#signup-form');
-const alert_box = document.querySelector('#alert-box');
+const alert_box = document.querySelector('#alert');
 
 signup_form.addEventListener('submit', register);
 
@@ -23,10 +23,12 @@ async function register(event) {
       }
     );
     signup_form.reset();
-    alert_box.style.color = 'green';
+    // alert_box.style.color = 'green';
+    alert_box.className = 'alert';
     alert_box.textContent = 'user is successfully registered.';
   } catch (error) {
-    alert_box.style.color = 'red';
+    // alert_box.style.color = 'red';
+    alert_box.className = 'alert error-alert';
     if (error.response.data) {
       alert_box.textContent = error.response.data.error;
     } else {

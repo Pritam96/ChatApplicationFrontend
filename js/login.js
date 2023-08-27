@@ -1,5 +1,5 @@
 const login_form = document.querySelector('#login-form');
-const alert_box = document.querySelector('#alert-box');
+const alert_box = document.querySelector('#alert');
 
 login_form.addEventListener('submit', login);
 
@@ -19,10 +19,12 @@ async function login(event) {
       }
     );
     login_form.reset();
-    alert_box.style.color = 'green';
+    alert_box.className = 'alert';
+    // alert_box.style.color = 'green';
     alert_box.textContent = 'logged in successfully.';
   } catch (error) {
-    alert_box.style.color = 'red';
+    // alert_box.style.color = 'red';
+    alert_box.className = 'alert error-alert';
     if (error.response.data) {
       alert_box.textContent = error.response.data.error;
     } else {
