@@ -1,7 +1,7 @@
-const signup_form = document.querySelector('#signup-form');
-const alert_box = document.querySelector('#alert');
+const registrationForm = document.querySelector('#registration-form');
+const alertBox = document.querySelector('#alert-box');
 
-signup_form.addEventListener('submit', register);
+registrationForm.addEventListener('submit', register);
 
 async function register(event) {
   event.preventDefault();
@@ -10,7 +10,7 @@ async function register(event) {
   const phone = document.querySelector('#phone').value;
   const password = document.querySelector('#password').value.trim();
 
-  alert_box.textContent = '';
+  alertBox.textContent = '';
 
   try {
     const response = await axios.post(
@@ -22,18 +22,16 @@ async function register(event) {
         password,
       }
     );
-    signup_form.reset();
-    // alert_box.style.color = 'green';
-    alert_box.className = 'alert';
-    alert_box.textContent = 'user is successfully registered.';
+    registrationForm.reset();
+    alertBox.style.color = 'green';
+    alertBox.textContent = 'user is successfully registered.';
   } catch (error) {
-    // alert_box.style.color = 'red';
-    alert_box.className = 'alert error-alert';
+    alertBox.style.color = 'red';
     if (error.response.data) {
-      alert_box.textContent = error.response.data.error;
+      alertBox.textContent = '* ' + error.response.data.error;
     } else {
       console.log(error);
-      alert_box.textContent = error.message;
+      alertBox.textContent = '* ' + error.message;
     }
   }
 }
