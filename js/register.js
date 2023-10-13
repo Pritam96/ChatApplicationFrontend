@@ -13,15 +13,16 @@ async function register(event) {
   alertBox.textContent = '';
 
   try {
-    const response = await axios.post(
-      'http://localhost:4000/api/v1/auth/register',
-      {
-        name,
-        email,
-        phone,
-        password,
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/auth/register`, {
+      name,
+      email,
+      phone,
+      password,
+    });
+
+    // Saving the token in localStorage
+    localStorage.setItem('token', response.data.token);
+
     registrationForm.reset();
     alertBox.style.color = 'green';
     alertBox.textContent = 'user is successfully registered.';

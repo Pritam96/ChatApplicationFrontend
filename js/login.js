@@ -11,13 +11,14 @@ async function login(event) {
   alertBox.textContent = '';
 
   try {
-    const response = await axios.post(
-      'http://localhost:4000/api/v1/auth/login',
-      {
-        email,
-        password,
-      }
-    );
+    const response = await axios.post(`${BASE_URL}/auth/login`, {
+      email,
+      password,
+    });
+
+    // Saving the token in localStorage
+    localStorage.setItem('token', response.data.token);
+
     loginForm.reset();
     alertBox.style.color = 'green';
     alertBox.textContent = 'logged in successfully.';
