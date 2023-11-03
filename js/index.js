@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetchAllChats();
 });
 
-function scrollToBottom() {
+function scrollToBottom(content) {
   var messageBox = document.getElementById('message-content');
   messageBox.scrollTop = messageBox.scrollHeight;
 }
@@ -277,16 +277,19 @@ function createChatUser(chat) {
     chatWindow.classList.remove('visually-hidden');
     // get all messages of the current chat
     try {
-      const response = await axios.get(`${BASE_URL}/message/${chat._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      // call the api every 1 second interval
+      setInterval(async () => {
+        const response = await axios.get(`${BASE_URL}/message/${chat._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      messageContent.innerHTML = '';
-      response.data.data.forEach((message) => {
-        createMessageElement(message);
-      });
+        messageContent.innerHTML = '';
+        response.data.data.forEach((message) => {
+          createMessageElement(message);
+        });
 
-      scrollToBottom();
+        scrollToBottom(messageContent);
+      }, 1000);
     } catch (error) {
       console.log(error);
     }
