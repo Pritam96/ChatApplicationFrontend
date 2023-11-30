@@ -17,49 +17,7 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
-    <style>
-      /* * {
-        border: 0.5px solid red;
-      } */
-      .ml-auto,
-      .mx-auto {
-        margin-left: auto !important;
-      }
-      .message-box,
-      .user-box {
-        max-height: 70vh;
-        min-height: 70vh;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-      }
-
-      /* Initially, the sidebar is hidden */
-      .sidebar {
-        position: fixed;
-        left: -35%; /* Move the sidebar off-screen */
-        top: 0;
-        width: 35%;
-        height: 100%;
-        background-color: #333;
-        transition: left 0.3s ease-in-out; /* Add a smooth transition effect */
-        z-index: 1000; /* Ensure the sidebar is on top of other elements */
-      }
-      .card-body {
-        padding: 0.5rem 0.5rem;
-      }
-      .card-message {
-        font-size: 15px;
-        text-overflow: clip;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-      .modal-user {
-        max-height: 30vh;
-        min-height: 30vh;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-      }
-    </style>
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-dark bg-secondary">
@@ -389,8 +347,9 @@
       crossorigin="anonymous"
     ></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="./js/main.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <script src="./js/base_url.js"></script>
     <script src="./js/index.js"></script>
-    <!-- <script src="./js/index_refactored.js"></script> -->
   </body>
 </html>

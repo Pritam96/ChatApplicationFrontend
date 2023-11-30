@@ -1,0 +1,15 @@
+.ml-auto,
+.mx-auto {
+  margin-left: auto !important;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+label {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+.btn-block {
+  display: block;
+  width: 100%;
+}

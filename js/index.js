@@ -1,24 +1,43 @@
+const socket = io("http://localhost:4000");
+
 let currentUser;
 let currentChat;
 let selectedUsers = [];
 let existingUsers = [];
+let isSocketConnected = false;
+
+// message received socket implementation
+socket.on("message received", (newMessageReceived) => {
+  if (currentChat._id.toString() === newMessageReceived.chat._id.toString()) {
+    createMessageElement(newMessageReceived);
+    scrollToBottom();
+  }
+});
+
+// socket.on("connect_error", (error) => {
+//   console.error("Socket connection error:", error);
+// });
+
+// socket.on("connect_timeout", () => {
+//   console.error("Socket connection timeout");
+// });
 
 // Sidebar workings
-document.addEventListener('DOMContentLoaded', function () {
-  const searchBar = document.querySelector('#search');
-  const sidebar = document.getElementById('sidebar');
-  const searchInput = document.querySelector('#searchInput');
+document.addEventListener("DOMContentLoaded", function () {
+  const searchBar = document.querySelector("#search");
+  const sidebar = document.getElementById("sidebar");
+  const searchInput = document.querySelector("#searchInput");
 
-  searchBar.addEventListener('focus', function () {
+  searchBar.addEventListener("focus", function () {
     // Show the sidebar by setting its left position to 0
-    sidebar.style.left = '0';
+    sidebar.style.left = "0";
     searchInput.focus();
   });
 
   // Close the sidebar when clicking anywhere outside of it
-  document.addEventListener('click', function (e) {
+  document.addEventListener("click", function (e) {
     if (!sidebar.contains(e.target) && e.target !== searchBar) {
-      sidebar.style.left = '-35%';
+      sidebar.style.left = "-35%";
     }
   });
 
@@ -26,18 +45,18 @@ document.addEventListener('DOMContentLoaded', function () {
   fetchAllChats();
 });
 
-function scrollToBottom(content) {
-  var messageBox = document.getElementById('message-content');
+function scrollToBottom() {
+  var messageBox = document.getElementById("message-content");
   messageBox.scrollTop = messageBox.scrollHeight;
 }
 
 // Retrieve token from the localStorage
-const token = localStorage.getItem('token');
+const token = localStorage.getItem("token");
 
 // Check the token
 if (!token) {
-  alert('Authorization error. Please login again.');
-  window.location.href = './login.html';
+  alert("Authorization error. Please login again.");
+  window.location.href = "./login.html";
 }
 
 function getNormalDateTime(date) {
@@ -52,23 +71,30 @@ async function getCurrentUser() {
       headers: { Authorization: `Bearer ${token}` },
     });
     currentUser = response.data.data;
+
+    // socket connection setup
+    socket.emit("setup", currentUser);
+    socket.on("connected", () => {
+      // console.log("SOCKET CONNECTION");
+      isSocketConnected = true;
+    });
   } catch (error) {
     console.log(error);
   }
 }
 
 // Sidebar content
-const sidebarContent = document.getElementById('sidebar-content');
-const searchInput = document.querySelector('#searchInput');
+const sidebarContent = document.getElementById("sidebar-content");
+const searchInput = document.querySelector("#searchInput");
 
 let searchTimer;
 
 // Search user implementation
-searchInput.addEventListener('input', async (e) => {
+searchInput.addEventListener("input", async (e) => {
   // Clear previous search timer
   clearTimeout(searchTimer);
 
-  sidebarContent.innerHTML = 'Loading...';
+  sidebarContent.innerHTML = "Loading...";
 
   // Start a new search timer
   searchTimer = setTimeout(async () => {
@@ -81,44 +107,44 @@ searchInput.addEventListener('input', async (e) => {
       );
 
       if (response.data.data.length > 0) {
-        sidebarContent.innerHTML = '';
+        sidebarContent.innerHTML = "";
         response.data.data.forEach((user) => {
           createSearchedUser(user, sidebarContent);
         });
       } else {
-        sidebarContent.innerHTML = '';
-        const p = document.createElement('p');
-        p.classList.add('text-light', 'text-center');
-        p.append('No users found with this keyword.');
+        sidebarContent.innerHTML = "";
+        const p = document.createElement("p");
+        p.classList.add("text-light", "text-center");
+        p.append("No users found with this keyword.");
         sidebarContent.append(p);
       }
     } catch (error) {
       console.log(error);
-      sidebarContent.innerHTML = 'An error occurred while fetching data.';
+      sidebarContent.innerHTML = "An error occurred while fetching data.";
     }
   }, 500); // Delay the search by 500 milliseconds after the user stops typing
 });
 
 // Create searched users element
 function createSearchedUser(user, parentElement) {
-  const card = document.createElement('div');
-  card.classList.add('card', 'mb-2', 'bg-light');
+  const card = document.createElement("div");
+  card.classList.add("card", "mb-2", "bg-light");
   // const card_body = document.createElement('div');
-  const card_body = document.createElement('a');
+  const card_body = document.createElement("a");
   // card_body.classList.add('card-body');
   card_body.classList.add(
-    'card-body',
-    'stretched-link',
-    'text-decoration-none'
+    "card-body",
+    "stretched-link",
+    "text-decoration-none"
   );
-  card_body.setAttribute('href', '');
-  const card_title = document.createElement('h6');
-  card_title.classList.add('card-title');
+  card_body.setAttribute("href", "");
+  const card_title = document.createElement("h6");
+  card_title.classList.add("card-title");
 
   // card title
   card_title.append(user.name);
-  const card_text = document.createElement('p');
-  card_text.classList.add('card-text', 'text-truncate');
+  const card_text = document.createElement("p");
+  card_text.classList.add("card-text", "text-truncate");
   // card text
   card_text.textContent = user.email;
   card_body.append(card_title, card_text);
@@ -127,12 +153,12 @@ function createSearchedUser(user, parentElement) {
   // add to the sidebar element
   parentElement.append(card);
   if (parentElement === sidebarContent) {
-    card_body.addEventListener('click', () => {
+    card_body.addEventListener("click", () => {
       // e.preventDefault();
       connectUser(user._id);
     });
   } else if (parentElement === modalContent) {
-    card_body.addEventListener('click', (e) => {
+    card_body.addEventListener("click", (e) => {
       e.preventDefault();
       // Remove from seletedUsers
       if (selectedUsers.indexOf(user._id) > -1) {
@@ -144,14 +170,14 @@ function createSearchedUser(user, parentElement) {
         selectedUsers.push(user._id);
         createSelectedUserButton(
           user._id,
-          user.name.split(' ')[0],
+          user.name.split(" ")[0],
           modalSelectedUserSection
         );
       }
       // console.log(selectedUsers);
     });
   } else if (parentElement === updateModalContent) {
-    card_body.addEventListener('click', (e) => {
+    card_body.addEventListener("click", (e) => {
       e.preventDefault();
       // Remove from seletedUsers
       if (selectedUsers.indexOf(user._id) > -1) {
@@ -163,7 +189,7 @@ function createSearchedUser(user, parentElement) {
         selectedUsers.push(user._id);
         createSelectedUserButton(
           user._id,
-          user.name.split(' ')[0],
+          user.name.split(" ")[0],
           modalExistingUserSection
         );
       }
@@ -190,7 +216,7 @@ async function connectUser(userId) {
 }
 
 // Chat content
-const chatContent = document.getElementById('chat-content');
+const chatContent = document.getElementById("chat-content");
 
 // Fetching all chats for the current user
 async function fetchAllChats() {
@@ -210,44 +236,49 @@ async function fetchAllChats() {
   }
 }
 
-const chatWindow = document.getElementById('chat-window');
-const chatUser = document.getElementById('chat-user');
-const messageContent = document.getElementById('message-content');
+const chatWindow = document.getElementById("chat-window");
+const chatUser = document.getElementById("chat-user");
+const messageContent = document.getElementById("message-content");
 
 // Create chat users element
 function createChatUser(chat) {
+  // console.log("CHAT INFO", chat);
   let cardTitle;
-  let cardText = '';
+  let cardText = "";
   if (chat.isGroupChat) {
     cardTitle = chat.chatName;
   } else {
-    cardTitle = chat.users[1].name;
+    chat.users.forEach((user) => {
+      if (user._id !== currentUser._id) cardTitle = user.name;
+    });
   }
 
   if (chat.latestMessage) {
     cardText = chat.latestMessage.content;
+  } else {
+    cardText = "No message available";
   }
-  const card = document.createElement('div');
-  card.classList.add('card', 'mb-2', 'bg-light');
+  const card = document.createElement("div");
+  card.classList.add("card", "mb-2", "bg-light");
   // const card_body = document.createElement('div');
-  const card_body = document.createElement('a');
+  const card_body = document.createElement("a");
   // card_body.classList.add('card-body');
   card_body.classList.add(
-    'card-body',
-    'stretched-link',
-    'text-decoration-none'
+    "card-body",
+    "stretched-link",
+    "text-decoration-none"
   );
-  card_body.setAttribute('href', '');
-  const card_title = document.createElement('h6');
-  card_title.classList.add('card-title');
-  const span = document.createElement('span');
-  span.classList.add('float-end', 'badge', 'bg-light', 'text-dark');
+  card_body.setAttribute("href", "");
+  const card_title = document.createElement("h6");
+  card_title.classList.add("card-title");
+  const span = document.createElement("span");
+  span.classList.add("float-end", "badge", "bg-light", "text-dark");
   // span text (chat updated time)
   span.append(getNormalDateTime(chat.updatedAt));
   // card title (User name or group name)
   card_title.append(cardTitle, span);
-  const card_text = document.createElement('p');
-  card_text.classList.add('card-text', 'card-message');
+  const card_text = document.createElement("p");
+  card_text.classList.add("card-text", "card-message");
   // card text (latest message)
   card_text.textContent = cardText;
   card_body.append(card_title, card_text);
@@ -257,7 +288,7 @@ function createChatUser(chat) {
   chatContent.append(card);
 
   // click chat user to chat
-  card_body.addEventListener('click', async (e) => {
+  card_body.addEventListener("click", async (e) => {
     e.preventDefault();
     selectedUsers = [];
     existingUsers = [];
@@ -266,30 +297,32 @@ function createChatUser(chat) {
 
     // If current chat is not  a group chat, then remove the eye-button
     if (chat.isGroupChat) {
-      eyeButton.classList.remove('visually-hidden');
+      eyeButton.classList.remove("visually-hidden");
     } else {
-      eyeButton.classList.add('visually-hidden');
+      eyeButton.classList.add("visually-hidden");
     }
 
     // User name / Group Name
     chatUser.textContent = cardTitle;
 
-    chatWindow.classList.remove('visually-hidden');
+    chatWindow.classList.remove("visually-hidden");
     // get all messages of the current chat
     try {
-      // call the api every 1 second interval
-      setInterval(async () => {
-        const response = await axios.get(`${BASE_URL}/message/${chat._id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+      const response = await axios.get(`${BASE_URL}/message/${chat._id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-        messageContent.innerHTML = '';
-        response.data.data.forEach((message) => {
-          createMessageElement(message);
-        });
+      // join socket room
+      // console.log("CHAT ROOM", chat._id);
+      socket.emit("join chat", chat._id);
 
-        scrollToBottom(messageContent);
-      }, 1000);
+      messageContent.innerHTML = "";
+      response.data.data.forEach((message) => {
+        // console.log("MESSAGE", message);
+        createMessageElement(message);
+      });
+
+      scrollToBottom();
     } catch (error) {
       console.log(error);
     }
@@ -298,41 +331,41 @@ function createChatUser(chat) {
 
 // Message UI
 function createMessageElement(message) {
-  const card = document.createElement('div');
-  card.classList.add('card', 'col-7', 'mb-3');
-  const card_body = document.createElement('div');
-  card_body.classList.add('card-body');
-  const card_title = document.createElement('h6');
-  card_title.classList.add('card-title');
+  const card = document.createElement("div");
+  card.classList.add("card", "col-7", "mb-3");
+  const card_body = document.createElement("div");
+  card_body.classList.add("card-body");
+  const card_title = document.createElement("h6");
+  card_title.classList.add("card-title");
   // Chat User name
   card_title.textContent = message.sender.name;
-  const card_text = document.createElement('p');
-  card_text.classList.add('card-text');
+  const card_text = document.createElement("p");
+  card_text.classList.add("card-text");
   // Message content
   card_text.textContent = message.content;
-  const span = document.createElement('span');
-  span.classList.add('float-end', 'badge');
+  const span = document.createElement("span");
+  span.classList.add("float-end", "badge");
   // Message timestamp
   span.textContent = getNormalDateTime(message.createdAt);
   card_body.append(card_title, card_text, span);
   card.append(card_body);
 
   if (message.sender._id === currentUser._id) {
-    card.classList.add('text-light', 'bg-dark', 'float-end');
-    span.classList.add('bg-dark');
+    card.classList.add("text-light", "bg-dark", "float-end");
+    span.classList.add("bg-dark");
   } else {
-    card.classList.add('bg-light');
-    span.classList.add('bg-light', 'text-dark');
+    card.classList.add("bg-light");
+    span.classList.add("bg-light", "text-dark");
   }
 
   messageContent.append(card);
 }
 
 // sending message
-const messageInput = document.getElementById('input-message');
-const sendButton = document.getElementById('send-message-button-right');
+const messageInput = document.getElementById("input-message");
+const sendButton = document.getElementById("send-message-button-right");
 
-sendButton.addEventListener('click', async (e) => {
+sendButton.addEventListener("click", async (e) => {
   e.preventDefault();
 
   if (!messageInput.value.trim()) {
@@ -351,24 +384,31 @@ sendButton.addEventListener('click', async (e) => {
       }
     );
 
-    messageInput.value = '';
+    // send new message to socket
+    // console.log("POST MESSAGE", response.data.data);
+    socket.emit("new message", response.data.data);
+
+    createMessageElement(response.data.data);
+
+    messageInput.value = "";
+    scrollToBottom();
   } catch (error) {
     console.log(error);
   }
 });
 
 // modal content
-const modalContent = document.getElementById('content-modal');
-const searchUser = document.getElementById('groupSearchUser');
+const modalContent = document.getElementById("content-modal");
+const searchUser = document.getElementById("groupSearchUser");
 
 let searchUserTimer;
 
 // Search user implementation
-searchUser.addEventListener('input', async (e) => {
+searchUser.addEventListener("input", async (e) => {
   // Clear previous search timer
   clearTimeout(searchTimer);
 
-  modalContent.innerHTML = 'Loading...';
+  modalContent.innerHTML = "Loading...";
 
   // Start a new search timer
   searchUserTimer = setTimeout(async () => {
@@ -381,33 +421,33 @@ searchUser.addEventListener('input', async (e) => {
       );
 
       if (response.data.data.length > 0) {
-        modalContent.innerHTML = '';
+        modalContent.innerHTML = "";
         response.data.data.forEach((user) => {
           createSearchedUser(user, modalContent);
         });
       } else {
-        modalContent.innerHTML = '';
-        const p = document.createElement('p');
-        p.classList.add('text-light', 'text-center');
-        p.append('No users found with this keyword.');
+        modalContent.innerHTML = "";
+        const p = document.createElement("p");
+        p.classList.add("text-light", "text-center");
+        p.append("No users found with this keyword.");
         modalContent.append(p);
       }
     } catch (error) {
       console.log(error);
-      modalContent.innerHTML = 'An error occurred while fetching data.';
+      modalContent.innerHTML = "An error occurred while fetching data.";
     }
   }, 500);
 });
 
-const modalSelectedUserSection = document.getElementById('selected-user');
+const modalSelectedUserSection = document.getElementById("selected-user");
 
 // User button UI after selecting a searched user
 function createSelectedUserButton(userId, userFirstName, parentElement) {
-  const userButton = document.createElement('button');
-  userButton.classList.add('btn', 'btn-sm', 'btn-primary', 'mb-3', 'me-2');
-  userButton.setAttribute('id', `button${userId}`);
-  const icon = document.createElement('i');
-  icon.classList.add('fa-solid', 'fa-x');
+  const userButton = document.createElement("button");
+  userButton.classList.add("btn", "btn-sm", "btn-primary", "mb-3", "me-2");
+  userButton.setAttribute("id", `button${userId}`);
+  const icon = document.createElement("i");
+  icon.classList.add("fa-solid", "fa-x");
   userButton.append(`${userFirstName} `, icon);
   parentElement.append(userButton);
 
@@ -417,16 +457,16 @@ function createSelectedUserButton(userId, userFirstName, parentElement) {
   };
 }
 
-const createGroupButton = document.getElementById('create-group-button');
+const createGroupButton = document.getElementById("create-group-button");
 
 // Create new group button
-createGroupButton.addEventListener('click', async () => {
+createGroupButton.addEventListener("click", async () => {
   const groupNameInput = document
-    .getElementById('create-group-name')
+    .getElementById("create-group-name")
     .value.trim();
 
-  if (groupNameInput === '' || selectedUsers.length < 2) {
-    return alert('Give a group name and add at last two members.');
+  if (groupNameInput === "" || selectedUsers.length < 2) {
+    return alert("Give a group name and add at last two members.");
   }
 
   try {
@@ -441,13 +481,13 @@ createGroupButton.addEventListener('click', async () => {
       }
     );
     if (response) {
-      currentChat = document.getElementById('create-group-name').value = '';
-      modalSelectedUserSection.innerHTML = '';
-      modalContent.innerHTML = '';
-      searchUser.value = '';
+      currentChat = document.getElementById("create-group-name").value = "";
+      modalSelectedUserSection.innerHTML = "";
+      modalContent.innerHTML = "";
+      searchUser.value = "";
 
       selectedUsers = [];
-      chatContent.innerHTML = '';
+      chatContent.innerHTML = "";
       fetchAllChats();
     }
   } catch (error) {
@@ -455,16 +495,16 @@ createGroupButton.addEventListener('click', async () => {
   }
 });
 
-const modalExistingUserSection = document.getElementById('existing-user');
-const eyeButton = document.getElementById('eye-button');
+const modalExistingUserSection = document.getElementById("existing-user");
+const eyeButton = document.getElementById("eye-button");
 
 // Eye Button for rename a group chat and add or remove members
-eyeButton.addEventListener('click', () => {
-  document.getElementById('groupChatUpdateModalLabel').innerText =
+eyeButton.addEventListener("click", () => {
+  document.getElementById("groupChatUpdateModalLabel").innerText =
     currentChat.chatName;
-  modalExistingUserSection.innerHTML = '';
-  updateModalContent.innerHTML = '';
-  searchInputUpdate.value = '';
+  modalExistingUserSection.innerHTML = "";
+  updateModalContent.innerHTML = "";
+  searchInputUpdate.value = "";
   selectedUsers = [];
   existingUsers = [];
 
@@ -474,7 +514,7 @@ eyeButton.addEventListener('click', () => {
       existingUsers.push(user._id);
       createSelectedUserButton(
         user._id,
-        user.name.split(' ')[0],
+        user.name.split(" ")[0],
         modalExistingUserSection
       );
     }
@@ -483,14 +523,14 @@ eyeButton.addEventListener('click', () => {
   // console.log(selectedUsers);
 });
 
-const updateGroupButton = document.getElementById('update-group-button');
+const updateGroupButton = document.getElementById("update-group-button");
 
 // Update Group Name & Add or Remove members in the current group
-updateGroupButton.addEventListener('click', async () => {
+updateGroupButton.addEventListener("click", async () => {
   const updatedGroupName = document
-    .getElementById('update-group-name')
+    .getElementById("update-group-name")
     .value.trim();
-  if (updatedGroupName !== '') {
+  if (updatedGroupName !== "") {
     try {
       const response = await axios.put(
         `${BASE_URL}/chat/rename`,
@@ -503,7 +543,7 @@ updateGroupButton.addEventListener('click', async () => {
         }
       );
       if (response) {
-        console.log('Changed Group Name: ', updatedGroupName);
+        console.log("Changed Group Name: ", updatedGroupName);
         // fetchAllChats();
       }
     } catch (error) {
@@ -530,7 +570,7 @@ updateGroupButton.addEventListener('click', async () => {
         }
       );
       if (response) {
-        console.log('User added: ', userId);
+        console.log("User added: ", userId);
         // fetchAllChats();
       }
     } catch (error) {
@@ -556,7 +596,7 @@ updateGroupButton.addEventListener('click', async () => {
         }
       );
       if (response) {
-        console.log('User Removed: ', userId);
+        console.log("User Removed: ", userId);
         // fetchAllChats();
       }
     } catch (error) {
@@ -564,14 +604,14 @@ updateGroupButton.addEventListener('click', async () => {
     }
   });
 
-  chatContent.innerHTML = '';
+  chatContent.innerHTML = "";
   fetchAllChats();
 });
 
-const searchInputUpdate = document.querySelector('#groupSearchUserUpdate');
-const updateModalContent = document.querySelector('#content-update-modal');
+const searchInputUpdate = document.querySelector("#groupSearchUserUpdate");
+const updateModalContent = document.querySelector("#content-update-modal");
 
-searchInputUpdate.addEventListener('input', async (e) => {
+searchInputUpdate.addEventListener("input", async (e) => {
   clearTimeout(searchTimer);
 
   searchTimer = setTimeout(async () => {
@@ -584,20 +624,20 @@ searchInputUpdate.addEventListener('input', async (e) => {
       );
 
       if (response.data.data.length > 0) {
-        updateModalContent.innerHTML = '';
+        updateModalContent.innerHTML = "";
         response.data.data.forEach((user) => {
           createSearchedUser(user, updateModalContent);
         });
       } else {
-        updateModalContent.innerHTML = '';
-        const p = document.createElement('p');
-        p.classList.add('text-light', 'text-center');
-        p.append('No users found with this keyword.');
+        updateModalContent.innerHTML = "";
+        const p = document.createElement("p");
+        p.classList.add("text-light", "text-center");
+        p.append("No users found with this keyword.");
         updateModalContent.append(p);
       }
     } catch (error) {
       console.log(error);
-      updateModalContent.innerHTML = 'An error occurred while fetching data.';
+      updateModalContent.innerHTML = "An error occurred while fetching data.";
     }
   }, 500); // Delay the search by 500 milliseconds after the user stops typing
 });
