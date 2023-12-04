@@ -1,37 +1,37 @@
-const loginForm = document.querySelector('#login-form');
-const alertBox = document.querySelector('#alert-box');
+const loginForm = document.querySelector("#login-form");
+const alertBox = document.querySelector("#alert-box");
 
-loginForm.addEventListener('submit', login);
+loginForm.addEventListener("submit", login);
 
 async function login(event) {
   event.preventDefault();
-  const email = document.querySelector('#email').value.trim().toLowerCase();
-  const password = document.querySelector('#password').value.trim();
+  const email = document.querySelector("#email").value.trim().toLowerCase();
+  const password = document.querySelector("#password").value.trim();
 
-  alertBox.textContent = '';
+  alertBox.textContent = "";
 
   try {
-    const response = await axios.post(`${BASE_URL}/auth/login`, {
+    const response = await axios.post(`${AUTH_URL}/login`, {
       email,
       password,
     });
 
     // Saving the token in localStorage
-    localStorage.setItem('token', response.data.token);
+    localStorage.setItem("token", response.data.token);
 
     loginForm.reset();
-    alertBox.style.color = 'green';
-    alertBox.textContent = 'logged in successfully.';
+    alertBox.style.color = "green";
+    alertBox.textContent = "logged in successfully.";
     setTimeout(() => {
-      window.location.href = './index.html';
+      window.location.href = "./index.html";
     }, 3000);
   } catch (error) {
-    alertBox.style.color = 'red';
+    alertBox.style.color = "red";
     if (error.response.data) {
-      alertBox.textContent = '* ' + error.response.data.error;
+      alertBox.textContent = "* " + error.response.data.error;
     } else {
       console.log(error);
-      alertBox.textContent = '* ' + error.message;
+      alertBox.textContent = "* " + error.message;
     }
   }
 }

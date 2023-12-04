@@ -2,6 +2,7 @@
 .mx-auto {
   margin-left: auto !important;
 }
+
 .message-box,
 .user-box {
   height: 70vh;
@@ -20,15 +21,36 @@
   transition: left 0.3s ease-in-out; /* Add a smooth transition effect */
   z-index: 1000; /* Ensure the sidebar is on top of other elements */
 }
+
 .card-body {
   padding: 0.5rem 0.5rem;
 }
+
+.card-title {
+  font-size: large;
+}
+
+.not-found {
+  text-align: center;
+}
+
+.sender-name {
+  font-weight: 500;
+}
+
 .card-message {
   font-size: 15px;
   text-overflow: clip;
   white-space: nowrap;
   overflow: hidden;
 }
+
+.card_user:hover,
+.active {
+  background-color: #c6c7c8 !important;
+  cursor: pointer;
+}
+
 .modal-user {
   max-height: 30vh;
   min-height: 30vh;
