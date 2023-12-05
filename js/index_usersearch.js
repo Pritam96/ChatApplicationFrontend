@@ -68,36 +68,27 @@ function createSearchedUser(user, parentElement) {
     if (parentElement === sidebarContent) {
       await connectUser(user._id);
       document.getElementById("sidebar").style.left = "-35%";
-    } else if (parentElement === modalContent) {
+    } else {
       // Remove from selectedUsers
       if (selectedUsers.indexOf(user._id) > -1) {
         selectedUsers = selectedUsers.filter((id) => id !== user._id);
         // Remove userButton element
         document.getElementById(`button${user._id}`).remove();
       } else {
-        // Add to selectedUsers
+        const userSection =
+          parentElement === modalContent
+            ? modalSelectedUserSection
+            : modalExistingUserSection;
+
+        // Add this user to selected user
         selectedUsers.push(user._id);
         createSelectedUserButton(
           user._id,
           user.name.split(" ")[0],
-          modalSelectedUserSection
-        );
-      }
-    } else if (parentElement === updateModalContent) {
-      // Remove from selectedUsers
-      if (selectedUsers.indexOf(user._id) > -1) {
-        selectedUsers = selectedUsers.filter((id) => id !== user._id);
-        // Remove that userButton element
-        document.getElementById(`button${user._id}`).remove();
-      } else {
-        // Add to selectedUsers
-        selectedUsers.push(user._id);
-        createSelectedUserButton(
-          user._id,
-          user.name.split(" ")[0],
-          modalExistingUserSection
+          userSection
         );
       }
     }
+    // console.log(selectedUsers);
   });
 }

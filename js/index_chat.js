@@ -35,7 +35,6 @@ async function fetchAllChats() {
 
 // Create chat users element
 function createChatUserElement(chats) {
-  const currentChat = getCurrentChat();
   chats.forEach((chat) => {
     let cardTitle;
     let cardText = "";
@@ -57,9 +56,10 @@ function createChatUserElement(chats) {
     card.classList.add("card", "mb-2", "bg-light", "card_user");
 
     // Set active a chat
-    if (chat._id === getCurrentChat()._id) {
-      card.classList.add("active");
-    }
+    if (getCurrentChat())
+      if (chat._id === getCurrentChat()._id) {
+        card.classList.add("active");
+      }
 
     const card_body = document.createElement("div");
     card_body.classList.add("card-body");
@@ -94,6 +94,8 @@ function createChatUserElement(chats) {
     // Click chat user to get all messages and start chat
     card_body.addEventListener("click", async (e) => {
       setCurrentChat(chat);
+      selectedUsers.length = 0;
+      existingUsers.length = 0;
       await fetchAllChats();
       await getMessages();
     });

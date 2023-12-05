@@ -20,7 +20,9 @@ function createSelectedUserButton(userId, userFirstName, parentElement) {
   parentElement.append(userButton);
 
   userButton.onclick = () => {
+    // when we click this button, it removes this user from selected user
     selectedUsers = selectedUsers.filter((id) => id !== userId);
+    // remove user button element also
     document.getElementById(`button${userId}`).remove();
   };
 }
@@ -56,8 +58,7 @@ createGroupButton.addEventListener("click", async () => {
     modalContent.innerHTML = "";
     searchUser.value = "";
 
-    selectedUsers = [];
-    chatContent.innerHTML = "";
+    selectedUsers.length = 0;
     fetchAllChats();
   } catch (error) {
     console.log(error);
@@ -72,14 +73,16 @@ const eyeButton = document.getElementById("eye-button");
 eyeButton.addEventListener("click", () => {
   document.getElementById("groupChatUpdateModalLabel").innerText =
     getCurrentChat().chatName;
+  document.getElementById("update-group-name").value = "";
   modalExistingUserSection.innerHTML = "";
   updateModalContent.innerHTML = "";
   searchInputUpdate.value = "";
-  selectedUsers = [];
-  existingUsers = [];
+
+  selectedUsers.length = 0;
+  existingUsers.length = 0;
 
   getCurrentChat().users.filter((user) => {
-    if (user._id !== getCurrentChat()._id) {
+    if (user._id !== currentlyLoggedUser._id) {
       selectedUsers.push(user._id);
       existingUsers.push(user._id);
       createSelectedUserButton(
@@ -110,63 +113,50 @@ updateGroupButton.addEventListener("click", async () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("Changed Group Name: ", updatedGroupName);
+      setCurrentChat(response.data.data);
+      console.log("Group name changed successfully");
     } catch (error) {
       console.log(error);
     }
   }
 
-  const added = selectedUsers.filter((userId) => {
-    return existingUsers.indexOf(userId) === -1;
-  });
-
-  // Add users to group one by one
-  added.forEach(async (userId) => {
+  // If selectedUsers is not equal to existingUsers, Update Group members
+  if (!areArraysEqual(selectedUsers, existingUsers)) {
+    if (getCurrentChat().groupAdmin._id !== currentlyLoggedUser._id) {
+      alert("User is not authorized to update this group");
+      return;
+    }
     try {
       const response = await axios.put(
-        `${CHAT_URL}/groupadd`,
+        `${CHAT_URL}/groupupdate`,
         {
           chatId: getCurrentChat()._id,
-          userId: userId,
+          updatedUsers: JSON.stringify(selectedUsers),
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-
-      console.log("User added: ", userId);
+      setCurrentChat(response.data.data);
+      console.log("Group members updated successfully");
     } catch (error) {
       console.log(error);
     }
-  });
+  }
 
-  const removed = existingUsers.filter((userId) => {
-    return selectedUsers.indexOf(userId) === -1;
-  });
-
-  removed.forEach(async (userId) => {
-    try {
-      const response = await axios.put(
-        `${CHAT_URL}/groupremove`,
-        {
-          chatId: getCurrentChat()._id,
-          userId: userId,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      console.log("User Removed: ", userId);
-    } catch (error) {
-      console.log(error);
-    }
-  });
-
-  chatContent.innerHTML = "";
-  fetchAllChats();
+  await fetchAllChats();
+  await getMessages();
 });
+
+function areArraysEqual(array1, array2) {
+  // Check if the length of both arrays is the same
+  if (array1.length !== array2.length) {
+    return false;
+  }
+
+  // Check if every element of array1 is included in array2
+  return array1.every((element) => array2.includes(element));
+}
 
 const searchInputUpdate = document.querySelector("#groupSearchUserUpdate");
 const updateModalContent = document.querySelector("#content-update-modal");

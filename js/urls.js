@@ -1,4 +1,4 @@
-const ENDPOINT = "http://localhost:4000";
+const ENDPOINT = "http://localhost:5000";
 const BASE_URL = `${ENDPOINT}/api/v1`;
 const AUTH_URL = `${BASE_URL}/auth`;
 const USER_URL = `${BASE_URL}/user`;
