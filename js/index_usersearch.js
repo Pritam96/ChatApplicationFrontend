@@ -13,7 +13,12 @@ async function searchUserHandler(parentElement, inputKeyword) {
   // Clear previous search timer
   clearTimeout(searchTimer);
 
-  parentElement.innerHTML = `<p class="text-center">Loading...</p>`;
+  let loadingMessage = `<p class="text-center">Loading...</p>`;
+
+  if (parentElement === sidebarContent)
+    loadingMessage = `<p class="text-light text-center">Loading...</p>`;
+
+  parentElement.innerHTML = loadingMessage;
 
   // Start a new search timer
   searchTimer = setTimeout(async () => {

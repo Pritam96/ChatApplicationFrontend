@@ -1,3 +1,5 @@
+const socket = io(ENDPOINT);
+
 // Retrieve token from the localStorage
 const token = localStorage.getItem("token");
 
@@ -6,6 +8,12 @@ if (!token) {
   alert("Authorization error. Please login again.");
   window.location.href = "./login.html";
 }
+
+socket.on("receive-message", (message) => {
+  createMessageElement(message);
+  scrollToBottom();
+  fetchAllChats();
+});
 
 let currentlyLoggedUser;
 let selectedUsers = [];
@@ -33,6 +41,16 @@ document.addEventListener("DOMContentLoaded", async function () {
   showUserInfo();
   await fetchAllChats();
   await getMessages();
+});
+
+// Runs every time when we connect to the server
+socket.on("connect", () => {
+  console.log(`You connected with id: ${socket.id}`);
+
+  // Create a room with current user._id and send to the server
+  socket.emit("join-room", currentlyLoggedUser._id, (message) => {
+    console.log(message);
+  });
 });
 
 function scrollToBottom() {

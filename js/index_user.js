@@ -29,8 +29,11 @@ async function connectUser(userId) {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
     setCurrentChat(response.data.data);
+
     await fetchAllChats();
+    await getMessages();
     messageInput.focus();
   } catch (error) {
     console.log(error);

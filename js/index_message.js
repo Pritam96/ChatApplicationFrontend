@@ -40,6 +40,7 @@ async function getMessages() {
       });
     } else {
       const p = document.createElement("p");
+      p.id = "message-not-found";
       p.classList.add("not-found");
       p.innerText = "No messages available";
       messageContent.appendChild(p);
@@ -114,8 +115,20 @@ sendButton.addEventListener("click", async (e) => {
       }
     );
 
+    const message_obj = response.data.data;
+
     messageInput.value = "";
-    createMessageElement(response.data.data);
+
+    // Remove not-found element, for very first message of a chat
+    const not_found_element = document.getElementById("message-not-found");
+    if (not_found_element) not_found_element.remove();
+
+    createMessageElement(message_obj);
+    // console.log(message_obj);
+
+    // send message to server
+    socket.emit("send-message", message_obj);
+
     scrollToBottom();
     await fetchAllChats();
   } catch (error) {
