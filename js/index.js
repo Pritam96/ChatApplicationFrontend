@@ -44,11 +44,13 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 // Runs every time when we connect to the server
-socket.on("connect", () => {
+socket.on("connect", async () => {
   console.log(`You connected with id: ${socket.id}`);
 
+  const user = await getCurrentUser();
+
   // Create a room with current user._id and send to the server
-  socket.emit("join-room", currentlyLoggedUser._id, (message) => {
+  socket.emit("join-room", user._id, (message) => {
     console.log(message);
   });
 });
@@ -83,5 +85,9 @@ logoutElement.addEventListener("click", () => {
   localStorage.removeItem("currentUser");
   localStorage.removeItem("currentChat");
   localStorage.removeItem("token");
+  // Emit the "disconnect-and-leave-room" event to the server
+  socket.emit("disconnect-and-leave-room", {}, () => {
+    console.log("disconnected");
+  });
   window.location.href = "./login.html";
 });
