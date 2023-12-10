@@ -145,68 +145,75 @@
               </div>
             </div>
             <div class="message-box" id="message-content">
-              <!-- <div class="card col-7 mb-3 bg-light">
-                <div class="card-body">
-                  <h6 class="card-title">Guest User</h6>
-                  <p class="card-text">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Iure atque asperiores cum ab explicabo, nulla non eum libero
-                    provident velit dolores possimus mollitia animi itaque
-                    repellendus inventore eius ex quibusdam.
-                  </p>
-                  <span class="float-end badge bg-light text-dark"
-                    >04.09.2023 08:40AM</span
-                  >
+              <!-- <div class="card-body">
+                <div
+                  class="card mb-3 card-message text-light bg-secondary float-end mx-2"
+                >
+                  <div class="card-body">
+                    <h6 class="card-title">Pritam Mondal</h6>
+                    <p class="card-text">Hi</p>
+                    <span class="float-end badge bg-dark"
+                      >12/5/2023, 8:31:31 PM</span
+                    >
+                  </div>
                 </div>
               </div>
-
-              <div class="card col-7 mb-3 text-light bg-dark float-end">
-                <div class="card-body">
-                  <h6 class="card-title">Guest User</h6>
-                  <p class="card-text">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Iure atque asperiores cum ab explicabo, nulla non eum libero
-                    provident velit dolores possimus mollitia animi itaque
-                    repellendus inventore eius ex quibusdam.
-                  </p>
-                  <span class="float-end badge bg-dark"
-                    >04.09.2023 08:40AM</span
-                  >
+              <div class="card-body">
+                <div
+                  class="card mb-3 card-message border-secondary float-start mx-2"
+                >
+                  <div class="card-body">
+                    <h6 class="card-title">John Doe</h6>
+                    <p class="card-text">Hi Pritam</p>
+                    <span class="float-end badge bg-dark"
+                      >12/7/2023, 1:00:09 PM</span
+                    >
+                  </div>
                 </div>
               </div>
-
-              <div class="card col-7 mb-3 bg-light">
-                <div class="card-body">
-                  <h6 class="card-title">Guest User</h6>
-                  <p class="card-text">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Iure atque asperiores cum ab explicabo, nulla non eum libero
-                    provident velit dolores possimus mollitia animi itaque
-                    repellendus inventore eius ex quibusdam.
-                  </p>
-                  <span class="float-end badge bg-light text-dark"
-                    >04.09.2023 08:40AM</span
-                  >
+              <div class="card-body">
+                <div
+                  class="card mb-3 card-message text-light bg-secondary float-end mx-2"
+                >
+                  <div class="card-body">
+                    <h6 class="card-title">Pritam Mondal</h6>
+                    <img
+                      src="https://aws-nodejs-multer-upload.s3.amazonaws.com/uploads/1702132516830-BinarySearch.png"
+                      class="img-fluid rounded mb-2"
+                      alt="img-fluid"
+                    /><span class="float-end badge bg-dark"
+                      >12/9/2023, 8:05:18 PM</span
+                    >
+                  </div>
                 </div>
               </div> -->
             </div>
-            <div class="input-group">
+            <form
+              class="input-group"
+              id="send-message-form"
+              method="POST"
+              enctype="multipart/form-data"
+            >
+              <span class="btn btn-outline-secondary btn-file">
+                <i class="fa fa-upload"></i> Browse
+                <input type="file" name="input-file" id="input-file" />
+              </span>
               <input
                 type="text"
                 class="form-control"
-                placeholder="Message"
+                placeholder="Write your message"
                 id="input-message"
                 aria-label="Message"
                 aria-describedby="send-message-button-right"
               />
               <button
-                type="button"
+                type="submit"
                 class="btn btn-secondary"
                 id="send-message-button-right"
               >
                 Send
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>

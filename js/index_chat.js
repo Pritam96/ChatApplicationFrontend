@@ -74,7 +74,8 @@ function createChatUserElement(chats) {
     // card title (User name / group name)
     card_title.append(cardTitle, span);
     const card_text = document.createElement("p");
-    card_text.classList.add("card-text", "card-message");
+    // card_text.classList.add("card-text", "card-message");
+    card_text.classList.add("card-text");
 
     // card text (latest message)
     if (chat.latestMessage) {

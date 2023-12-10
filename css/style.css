@@ -10,6 +10,10 @@
   scroll-behavior: smooth;
 }
 
+.message-box {
+  display: grid;
+}
+
 /* Initially, the sidebar is hidden */
 .sidebar {
   position: fixed;
@@ -39,10 +43,7 @@
 }
 
 .card-message {
-  font-size: 15px;
-  text-overflow: clip;
-  white-space: nowrap;
-  overflow: hidden;
+  max-width: 70%;
 }
 
 .card_user:hover,
@@ -51,9 +52,34 @@
   cursor: pointer;
 }
 
+.img-fluid:hover {
+  opacity: 0.5;
+  cursor: pointer;
+}
+
 .modal-user {
   max-height: 30vh;
   min-height: 30vh;
   overflow-y: auto;
   scroll-behavior: smooth;
+}
+
+.btn-file {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-file input[type="file"] {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 100%;
+  min-height: 100%;
+  font-size: 100px;
+  text-align: right;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  outline: none;
+  cursor: inherit;
+  display: block;
 }
