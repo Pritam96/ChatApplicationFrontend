@@ -29,7 +29,9 @@ async function fetchAllChats() {
       chatContent.appendChild(p);
     }
   } catch (error) {
-    console.log(error);
+    if (error.response.data) console.log(error.response.data.error);
+    else console.log(error);
+    showToast("Something went wrong!", "danger");
   }
 }
 
@@ -47,7 +49,11 @@ function createChatUserElement(chats) {
     }
 
     if (chat.latestMessage) {
-      cardText = chat.latestMessage.content;
+      if (chat.latestMessage.content) {
+        cardText = chat.latestMessage.content;
+      } else {
+        cardText = "🎴";
+      }
     } else {
       cardText = "No messages available";
     }

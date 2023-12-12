@@ -13,7 +13,9 @@ async function getCurrentUser() {
     localStorage.setItem("currentUser", JSON.stringify(userData));
     return userData;
   } catch (error) {
-    console.log(error);
+    if (error.response.data) console.log(error.response.data.error);
+    else console.log(error);
+    showToast("Something went wrong!", "danger");
   }
 }
 
@@ -36,6 +38,8 @@ async function connectUser(userId) {
     await getMessages();
     messageInput.focus();
   } catch (error) {
-    console.log(error);
+    if (error.response.data) console.log(error.response.data.error);
+    else console.log(error);
+    showToast("Something went wrong!", "danger");
   }
 }

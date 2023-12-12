@@ -36,7 +36,11 @@ createGroupButton.addEventListener("click", async () => {
     .value.trim();
 
   if (groupNameInput === "" || selectedUsers.length < 2) {
-    return alert("Give a group name and add at last two members.");
+    clearCreateGroupSection();
+    return showToast(
+      "Enter a group name and add at least two members",
+      "danger"
+    );
   }
 
   try {
@@ -52,17 +56,15 @@ createGroupButton.addEventListener("click", async () => {
     );
 
     setCurrentChat(response.data.data);
-
-    document.getElementById("create-group-name").value = "";
-    modalSelectedUserSection.innerHTML = "";
-    modalContent.innerHTML = "";
-    searchUser.value = "";
-
-    selectedUsers.length = 0;
+    showToast("Group is created successfully", "success");
     fetchAllChats();
+    await getMessages();
   } catch (error) {
-    console.log(error);
+    if (error.response.data) console.log(error.response.data.error);
+    else console.log(error);
+    showToast("Something went wrong!", "danger");
   }
+  clearCreateGroupSection();
 });
 
 // modal content of update group section
@@ -114,17 +116,19 @@ updateGroupButton.addEventListener("click", async () => {
         }
       );
       setCurrentChat(response.data.data);
-      console.log("Group name changed successfully");
+      showToast("Group name updated successfully", "success");
     } catch (error) {
-      console.log(error);
+      if (error.response.data) console.log(error.response.data.error);
+      else console.log(error);
+      showToast("Something went wrong!", "danger");
     }
   }
 
   // If selectedUsers is not equal to existingUsers, Update Group members
   if (!areArraysEqual(selectedUsers, existingUsers)) {
     if (getCurrentChat().groupAdmin._id !== currentlyLoggedUser._id) {
-      alert("User is not authorized to update this group");
-      return;
+      clearUpdateGroupSection();
+      return showToast("User is not authorized to update this group", "danger");
     }
     try {
       const response = await axios.put(
@@ -138,12 +142,14 @@ updateGroupButton.addEventListener("click", async () => {
         }
       );
       setCurrentChat(response.data.data);
-      console.log("Group members updated successfully");
+      showToast("Group members updated successfully", "success");
     } catch (error) {
-      console.log(error);
+      if (error.response.data) console.log(error.response.data.error);
+      else console.log(error);
+      showToast("Something went wrong!", "danger");
     }
   }
-
+  clearUpdateGroupSection();
   await fetchAllChats();
   await getMessages();
 });
@@ -165,3 +171,21 @@ const updateModalContent = document.querySelector("#content-update-modal");
 searchInputUpdate.addEventListener("input", async (e) => {
   await searchUserHandler(updateModalContent, searchInputUpdate);
 });
+
+function clearCreateGroupSection() {
+  document.getElementById("create-group-name").value = "";
+  modalSelectedUserSection.innerHTML = "";
+  modalContent.innerHTML = "";
+  searchUser.value = "";
+  selectedUsers.length = 0;
+  existingUsers.length = 0;
+}
+
+function clearUpdateGroupSection() {
+  document.getElementById("update-group-name").value = "";
+  document.getElementById("existing-user").innerHTML = "";
+  modalContent.innerHTML = "";
+  document.getElementById("groupSearchUserUpdate").value = "";
+  selectedUsers.length = 0;
+  existingUsers.length = 0;
+}

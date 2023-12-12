@@ -5,7 +5,8 @@ const token = localStorage.getItem("token");
 
 // Check the token
 if (!token) {
-  alert("Authorization error. Please login again.");
+  // alert("Authorization error. Please login again.");
+  showToast("Authorization error. Please login again.", "danger");
   window.location.href = "./login.html";
 }
 

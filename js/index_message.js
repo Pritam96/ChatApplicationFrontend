@@ -48,7 +48,9 @@ async function getMessages() {
 
     scrollToBottom();
   } catch (error) {
-    console.log(error);
+    if (error.response.data) console.log(error.response.data.error);
+    else console.log(error);
+    showToast("Something went wrong!", "danger");
   }
 }
 
@@ -120,7 +122,7 @@ sendMessageForm.addEventListener("submit", async (e) => {
   const chat = getCurrentChat();
 
   if (!chat) {
-    console.log("ChatId not found");
+    console.log("chatId not found");
     return;
   }
 
@@ -128,7 +130,7 @@ sendMessageForm.addEventListener("submit", async (e) => {
   const file = fileInput.files[0];
 
   if (!content && !file) {
-    console.log("Please enter a message");
+    console.log("blank message field");
     return;
   }
 
@@ -163,6 +165,7 @@ sendMessageForm.addEventListener("submit", async (e) => {
     scrollToBottom();
     await fetchAllChats();
   } catch (error) {
-    console.log(error);
+    if (error.response.data) showToast(error.response.data.error, "danger");
+    else console.log(error);
   }
 });

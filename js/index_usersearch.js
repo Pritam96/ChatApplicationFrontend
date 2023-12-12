@@ -94,6 +94,5 @@ function createSearchedUser(user, parentElement) {
         );
       }
     }
-    // console.log(selectedUsers);
   });
 }
